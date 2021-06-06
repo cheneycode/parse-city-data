@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	</head>
+	<body>
+		<script src="js/activity_map.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			//console.log(data);
+
+			// let arr = [];
+			// data.forEach(item => {
+			// 	// if (item.adcode.substring(2, 3) === "9") {
+			// 	// 	console.log(item.name + ':' + item.adcode)
+			// 	// }
+
+			// 	arr.push(Number(item.adcode.substring(2,4)))
+			// 	//console.log(item.name + ':' + )
+			// })
+			// let set = [...new Set(arr)];
+			// set.sort((a, b) => {
+			// 	return a - b;
+			// })
+			// console.log(set);
+			//getTreeData();
+
+			function getTreeData() {
+				let ProvincesArr = [],
+					hasCode = ["110000", "310000", "120000", "500000"];
+				data.forEach(item => {
+					if ((item.citycode === "0" || hasCode.includes(item.adcode)) && item.adcode !== "100000") {
+						item.id = Number(item.adcode);
+						item.pid = 100000;
+						item.level = 1;
+						item.sub_id = item.adcode.substring(0, 3);
+						item.children = [];
+						delete item.map_id;
+						ProvincesArr.push(item);
+					}
+				})
+
+
+				// ProvincesArr.map(item => {
+				// 	console.log(item);
+				// 	// data.forEach(item1 => {
+				// 	// 	console.log(item1);
+				// 	// })
+				// })
+
+				return ProvincesArr.map(item => {
+					data.forEach(item1 => {
+						for (let i = 0; i < 99; i++) {
+							if ((item.adcode.substring(0, 2) + (i < 10 ? ('0' + (i + 1)) : i) + '00') === item1
+								.adcode) {
+								item1.id = Number(item1.adcode);
+								item1.pid = Number(item.adcode);
+								item1.level = 2;
+								delete item1.map_id;
+								item.children.push(item1);
+								let arr = [];
+								data.forEach(item2 => {
+									if (item1.citycode === item2.citycode && item2.adcode.substring(3,
+											6) !=
+										"100" && item2.adcode.substring(3, 6) != "000") {
+										item2.id = Number(item2.adcode);
+										item2.pid = Number(item1.adcode);
+										item2.level = 3;
+										delete item2.map_id;
+										arr.push(item2);
+									}
+								})
+								item.children[0].children = arr;
+							}
+						}
+					})
+					return item;
+				})
+			}
+			//console.log(getTreeData());
+			console.log(JSON.stringify(getTreeData()));
+		</script>
+	</body>
+</html>
